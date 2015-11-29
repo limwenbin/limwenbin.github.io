@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
+body {
+  margin: 0;
+  overflow: hidden;
+}
 
 .node {
   stroke: #fff;
@@ -17,19 +21,19 @@
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script>
 
-var width = 960,
-    height = 500;
+// var width = 960,
+//     height = 500;
 
 var color = d3.scale.category20();
 
 var force = d3.layout.force()
     .charge(-120)
     .linkDistance(30)
-    .size([width, height]);
+    // .size([width, height]);
 
 var svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height);
+    // .attr("width", width)
+    // .attr("height", height);
 
 d3.json("miserables.json", function(error, graph) {
   if (error) throw error;
@@ -56,6 +60,9 @@ d3.json("miserables.json", function(error, graph) {
   node.append("title")
       .text(function(d) { return d.name; });
 
+  resize();
+  d3.select(window).on("resize", resize);
+
   force.on("tick", function() {
     link.attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
@@ -65,6 +72,12 @@ d3.json("miserables.json", function(error, graph) {
     node.attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; });
   });
+
+  function resize() {
+    width = window.innerWidth, height = window.innerHeight;
+    svg.attr("width", width).attr("height", height);
+    force.size([width, height]).resume();
+  }
 });
 
 </script>
