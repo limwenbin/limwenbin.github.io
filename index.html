@@ -1,94 +1,158 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body {
   margin: 0;
   overflow: hidden;
 }
 
-.circle {
+circle {
   stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+circle[mode="collasped"] {
+  stroke: #999;
   stroke-width: 1.5px;
 }
 
 .link {
   stroke: #999;
   stroke-opacity: .6;
+  position: absolute;
+  z-index: -1;
 }
 
 g {
-  font-family: "Helvetica", sans-serif;
-  font-size: 14px;
+  font-family: "Helvetica", sans-serif; font-size: 14px;
+  position: absolute;
+  z-index: 1;
 }
 
-g[level="0"] {
+g[node_id="0"] {
   font-size: 45px;
+  text-anchor: middle;
 }
-
 
 </style>
 <body>
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script>
 
+var root;
 var color = d3.scale.category20();
-
 var force = d3.layout.force()
-
+  .on("tick", tick);
 var svg = d3.select("body").append("svg")
+
+var node_container = svg.append("g");
+var link_container = svg.append("g");
+
+var gnode = link_container.selectAll(".gnode");
+var link = node_container.selectAll(".link");
 
 d3.json("wenbin.json", function(error, graph) {
   if (error) throw error;
 
+  root = graph;
+  root._nodes = [];
+  root._links = [];
+  update();
+});
+
+function update() {
   force
-    .nodes(graph.nodes)
-    .links(graph.links)
-    .linkDistance( function(d) { return d.target.level == 0 ? 100 : 60; })
-    .charge( function(d) { return d.level == 0 ? -1500 : -300; })
+    .nodes(root.nodes)
+    .links(root.links)
+    .linkDistance( function(d) { return d.source.node_id == 0 ? 100 : 60; })
+    .charge( function(d) { return d.node_id == 0 ? -1500 : -300; })
     .start();
 
-  var link = svg.selectAll(".link")
-      .data(graph.links)
-    .enter().append("line")
-      .attr("class", "link")
-      .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+  link = link.data(root.links.filter(function (d) { return d.visible; })
+    , function(d) { return d.target.node_id; });
 
-  var gnode = svg.selectAll(".gnode")
-      .data(graph.nodes)
-    .enter().append("g")
-      .attr("class", "gnode")
-      .attr("level", function(d) { return d.level; })
-      .call(force.drag);
+  link.exit().remove();  
+
+  link.enter().append("line")
+    .attr("class", "link")
+    .attr("source", function(d) { return d.source; })
+    .attr("target", function(d) { return d.target; })
+    .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+  gnode = gnode.data(root.nodes.filter(function (d) { return d.visible; })
+    , function(d) { return d.node_id;});
+
+  gnode.exit().remove();
+
+  gnode.enter().append("g")
+    .attr("class", "gnode")
+    .attr("node_id", function(d) { return d.node_id; })
+    .on("click", click)
+    .call(force.drag);
 
   var node = gnode.append("circle")
-    .attr("class", "circle")
-    .attr("r", function(d) { return d.level == 0 ? 50 : 10; })
-    .style("fill", function(d) { return color(d.group); });
+    // .attr("class", "circle")
+    .attr("mode", function(d) { return d.mode; })
+    .attr("r", function(d) { return d.node_id == 0 ? 50 : 10; })
+    .style("fill", function(d) { return color(d.node_id + 1); });
 
   var text = gnode.append("text")
-    .attr("dx", function(d) { return d.level == 0 ? "-.75em" : ".8em"; })
+    .attr("dx", function(d) { return d.node_id != 0 ? ".8em" : null; })
     .attr("dy", ".35em")
     .text(function(d) {return d.name;});
 
   resize();
   d3.select(window).on("resize", resize);
+}
 
-  force.on("tick", function() {
-    link.attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
+function tick() {
+  link.attr("x1", function(d) { return d.source.x; })
+      .attr("y1", function(d) { return d.source.y; })
+      .attr("x2", function(d) { return d.target.x; })
+      .attr("y2", function(d) { return d.target.y; });
 
-    gnode.attr("transform", function(d){
-      return "translate(" + d.x + "," + d.y + ")";
-    });
+  gnode.attr("transform", function(d) {
+    return "translate(" + d.x + "," + d.y + ")";
   });
+}
 
-  function resize() {
-    width = window.innerWidth, height = window.innerHeight;
-    svg.attr("width", width).attr("height", height);
-    force.size([width, height]).resume();
+function resize() {
+  width = window.innerWidth, height = window.innerHeight;
+  svg.attr("width", width).attr("height", height);
+  force.size([width, height]).resume();
+}
+
+// Figure out how to represent children in json data of "nodes".
+function click(d,i) {
+  if (d3.event.defaultPrevented) return;
+  toggle_children(d,i);
+  update();
+}
+
+function toggle_children(d,i) {
+  if (d.mode == "expanded") {
+    for (var j = 0; j < root.links.length; j++) {
+      if (root.links[j].source.node_id == i) {
+        var target_id = root.links[j].target.node_id;
+        toggle_children(target_id);
+        root.nodes[target_id].visible = false;
+        root.links[j].visible = false;
+      }
+    }
+    d.mode = "collasped";
   }
-});
+  else if (d.mode == "collasped") {
+    for (var j = 0; j < root.links.length; j++) {
+      if (root.links[j].source.node_id == i) {
+        var target_id = root.links[j].target.node_id;
+        toggle_children(target_id);
+        root.nodes[target_id].visible = true;
+        root.links[j].visible = true;
+      }
+    }
+    d.mode = "expanded";
+  }
+}
 
 </script>
