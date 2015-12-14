@@ -141,22 +141,33 @@ function click(d,i) {
 
 function toggle_node(d,i) {
   if (d.mode == "expanded") {
-    toggle_children(i);
+    hide_children(i);
     d.mode = "collasped";
   }
   else if (d.mode == "collasped") {
-    toggle_children(i);
+    show_children(i);
     d.mode = "expanded";
   }
 }
 
-function toggle_children(i) {
+function hide_children(i) {
   for (var j = 0; j < root.links.length; j++) {
     if (root.links[j].source.node_id == i) {
       var target_id = root.links[j].target.node_id;
       toggle_children(target_id);
-      root.nodes[target_id].visible = !root.nodes[target_id].visible ;
-      root.links[j].visible = !root.links[j].visible;
+      root.nodes[target_id].visible = false;
+      root.links[j].visible = false;
+    }
+  }
+}
+
+function hide_children(i) {
+  for (var j = 0; j < root.links.length; j++) {
+    if (root.links[j].source.node_id == i) {
+      var target_id = root.links[j].target.node_id;
+      toggle_children(target_id);
+      root.nodes[target_id].visible = true;
+      root.links[j].visible = true;
     }
   }
 }
