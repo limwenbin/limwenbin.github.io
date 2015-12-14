@@ -34,7 +34,8 @@ text{
 }
 
 text[node_id="0"] {
-  font-size: 45px;
+  font-size: 30px;
+  fill: white;
   text-anchor: middle;
 }
 
@@ -68,7 +69,7 @@ function update() {
   force
     .nodes(root.nodes.filter(function (d) { return d.visible > 0; }))
     .links(root.links.filter(function (d) { return d.visible > 0; }))
-    .linkDistance( function(d) { return d.source.node_id == 0 ? 100 : 60; })
+    .linkDistance( function(d) { return d.source.node_id == 0 ? 80 : 60; })
     .charge( function(d) { return d.node_id == 0 ? -1500 : -300; })
     .start();
 
@@ -99,7 +100,7 @@ function update() {
   gnode.append("circle")
     .attr("class", "circle")
     .attr("mode", function(d) { return d.mode; })
-    .attr("r", function(d) { return d.node_id == 0 ? 50 : 10; })
+    .attr("r", function(d) { return d.node_id == 0 ? 40 : 10; })
     .style("fill", function(d) { return color(d.node_id + 1); });
 
   gnode.selectAll(".text").remove();

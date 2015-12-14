@@ -6,7 +6,7 @@
 	{"name":"Books","node_id":3,"visible":1},
 	{"name":"Movies","node_id":4,"visible":1},
 	{"name":"TV","node_id":5,"visible":1},
-	{"name":"Anime","node_id":6,"visible":1},
+	{"name":"Hobbies","node_id":6,"visible":1},
 	{"name":"Blog","node_id":7,"visible":1}
 	],
 	"links":[
