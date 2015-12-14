@@ -1,13 +1,13 @@
 {
 	"nodes":[
-	{"name":"WB","level":0,"node_id":0,"visible":true,"mode":"expanded"},
-	{"name":"Interests","level":1,"node_id":1,"visible":true},
-	{"name":"Projects","level":1,"node_id":2,"visible":true,"mode":"expanded"},
-	{"name":"Books","level":1,"node_id":3,"visible":true},
-	{"name":"Movies","level":1,"node_id":4,"visible":true},
-	{"name":"TV","level":1,"node_id":5,"visible":true},
-	{"name":"Anime","level":1,"node_id":6,"visible":true},
-	{"name":"Blog","level":2,"node_id":7,"visible":true}
+	{"name":"WB","node_id":0,"visible":true,"mode":"expanded"},
+	{"name":"Interests","node_id":1,"visible":true},
+	{"name":"Projects","node_id":2,"visible":true,"mode":"expanded"},
+	{"name":"Books","node_id":3,"visible":true},
+	{"name":"Movies","node_id":4,"visible":true},
+	{"name":"TV","node_id":5,"visible":true},
+	{"name":"Anime","node_id":6,"visible":true},
+	{"name":"Blog","node_id":7,"visible":true}
 	],
 	"links":[
 	{"source":0,"target":1,"value":3,"visible":true},
