@@ -1,13 +1,20 @@
 {
 	"nodes":[
-	{"name":"WB","node_id":0,"visible":1,"mode":"expanded"},
-	{"name":"Interests","node_id":1,"visible":1},
-	{"name":"Projects","node_id":2,"visible":1,"mode":"expanded"},
-	{"name":"Books","node_id":3,"visible":1},
-	{"name":"Movies","node_id":4,"visible":1},
-	{"name":"TV","node_id":5,"visible":1},
-	{"name":"Hobbies","node_id":6,"visible":1},
-	{"name":"Blog","node_id":7,"visible":1}
+	{"name":"WB","group":1,"r":40,"node_id":0,"visible":1,"type":"node","mode":"expanded"},
+	{"name":"Interests","group":2,"r":10,"node_id":1,"type":"node","visible":1,"mode":"expanded"},
+	{"name":"Projects","group":3,"r":10,"node_id":2,"visible":1,"type":"node","mode":"expanded"},
+	{"name":"Books","group":4,"r":10,"node_id":3,"visible":1,"type":"node","mode":"expanded"},
+	{"name":"Movies","group":5,"r":10,"node_id":4,"visible":1,"type":"node"},
+	{"name":"TV","group":6,"r":10,"node_id":5,"visible":1,"type":"node"},
+	{"name":"Hobbies","group":7,"r":10,"node_id":6,"visible":1,"type":"node"},
+	{"name":"Blog","group":3,"r":5,"node_id":7,"visible":1,"type":"node"},
+	{"name":"Infinite Jest","group":4,"r":40,"node_id":8,"visible":1,
+	"type":"book","href":"https://d.gr-assets.com/books/1446876799s/6759.jpg"},
+	{"name":"Gödel, Escher, Bach","group":4,"r":40,"node_id":9,"visible":1,
+	"type":"book","href":"https://d.gr-assets.com/books/1428732588s/24113.jpg"},
+	{"name":"Mathematics","group":2,"r":5,"node_id":10,"visible":1,"type":"node"},
+	{"name":"Physics","group":2,"r":5,"node_id":11,"visible":1,"type":"node"},
+	{"name":"Computer Science","group":2,"r":5,"node_id":12,"visible":1,"type":"node"}
 	],
 	"links":[
 	{"source":0,"target":1,"value":3,"visible":1},
@@ -16,6 +23,13 @@
 	{"source":0,"target":4,"value":3,"visible":1},
 	{"source":0,"target":5,"value":3,"visible":1},
 	{"source":0,"target":6,"value":3,"visible":1},
-	{"source":2,"target":7,"value":3,"visible":1}
+	{"source":2,"target":7,"value":3,"visible":1},
+	{"source":3,"target":8,"value":3,"visible":1},
+	{"source":3,"target":9,"value":3,"visible":1},
+	{"source":1,"target":10,"value":3,"visible":1},
+	{"source":1,"target":11,"value":3,"visible":1},
+	{"source":1,"target":12,"value":3,"visible":1},
+	{"source":9,"target":10,"value":3,"visible":1,"type":"lateral"},
+	{"source":9,"target":12,"value":3,"visible":1,"type":"lateral"}
 	]
 }
