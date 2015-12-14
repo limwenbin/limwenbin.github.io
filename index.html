@@ -25,12 +25,15 @@ circle[mode="collasped"] {
 }
 
 g {
-  font-family: "Helvetica", sans-serif; font-size: 14px;
   position: absolute;
   z-index: 1;
 }
 
-g[node_id="0"] {
+text{
+  font-family: "Helvetica", sans-serif; font-size: 14px;
+}
+
+text[node_id="0"] {
   font-size: 45px;
   text-anchor: middle;
 }
@@ -63,8 +66,8 @@ d3.json("wenbin.json", function(error, graph) {
 
 function update() {
   force
-    .nodes(root.nodes)
-    .links(root.links)
+    .nodes(root.nodes.filter(function (d) { return d.visible; }))
+    .links(root.links.filter(function (d) { return d.visible; }))
     .linkDistance( function(d) { return d.source.node_id == 0 ? 100 : 60; })
     .charge( function(d) { return d.node_id == 0 ? -1500 : -300; })
     .start();
@@ -91,13 +94,19 @@ function update() {
     .on("click", click)
     .call(force.drag);
 
-  var node = gnode.append("circle")
-    // .attr("class", "circle")
+  gnode.selectAll(".circle").remove();
+
+  gnode.append("circle")
+    .attr("class", "circle")
     .attr("mode", function(d) { return d.mode; })
     .attr("r", function(d) { return d.node_id == 0 ? 50 : 10; })
     .style("fill", function(d) { return color(d.node_id + 1); });
 
-  var text = gnode.append("text")
+  gnode.selectAll(".text").remove();
+
+  gnode.append("text")
+    .attr("class", "text")
+    .attr("node_id", function(d) { return d.node_id; })
     .attr("dx", function(d) { return d.node_id != 0 ? ".8em" : null; })
     .attr("dy", ".35em")
     .text(function(d) {return d.name;});
@@ -126,32 +135,29 @@ function resize() {
 // Figure out how to represent children in json data of "nodes".
 function click(d,i) {
   if (d3.event.defaultPrevented) return;
-  toggle_children(d,i);
+  toggle_node(d,i);
   update();
 }
 
-function toggle_children(d,i) {
+function toggle_node(d,i) {
   if (d.mode == "expanded") {
-    for (var j = 0; j < root.links.length; j++) {
-      if (root.links[j].source.node_id == i) {
-        var target_id = root.links[j].target.node_id;
-        toggle_children(target_id);
-        root.nodes[target_id].visible = false;
-        root.links[j].visible = false;
-      }
-    }
+    toggle_children(i);
     d.mode = "collasped";
   }
   else if (d.mode == "collasped") {
-    for (var j = 0; j < root.links.length; j++) {
-      if (root.links[j].source.node_id == i) {
-        var target_id = root.links[j].target.node_id;
-        toggle_children(target_id);
-        root.nodes[target_id].visible = true;
-        root.links[j].visible = true;
-      }
-    }
+    toggle_children(i);
     d.mode = "expanded";
+  }
+}
+
+function toggle_children(i) {
+  for (var j = 0; j < root.links.length; j++) {
+    if (root.links[j].source.node_id == i) {
+      var target_id = root.links[j].target.node_id;
+      toggle_children(target_id);
+      root.nodes[target_id].visible = !root.nodes[target_id].visible ;
+      root.links[j].visible = !root.links[j].visible;
+    }
   }
 }
 
