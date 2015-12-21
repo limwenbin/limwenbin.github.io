@@ -53,9 +53,9 @@ var max_zoom = 7;
 var zoom = d3.behavior.zoom().scaleExtent([min_zoom,max_zoom]);
 
 var force = d3.layout.force()
+  .size([w,h])
   .on("tick", tick);
-var svg = d3.select("body").append("svg")
-svg.style("cursor","move");
+var svg = d3.select("body").append("svg");
 var link_container = svg.append("g");
 var node_container = svg.append("g");
 var link = link_container.selectAll(".link");
@@ -97,6 +97,7 @@ function update() {
     .attr("node_id", function(d) { return d.node_id; })
     .attr("type", function(d) { return d.type; })
     .on("click", click)
+    .on("mousedown", function() { d3.event.stopPropagation(); })
     .call(force.drag);
 
   // Create and update node and text elements
@@ -149,8 +150,8 @@ function tick() {
 function resize() {
   var width = window.innerWidth, height = window.innerHeight;
   svg.attr("width", width).attr("height", height);
-  force.size([force.size()[0]+width/zoom.scale(),
-    force.size()[1]+height/zoom.scale()]).resume();
+  force.size([force.size()[0]+(width-w)/zoom.scale(),
+    force.size()[1]+(height-h)/zoom.scale()]).resume();
   w = width;
   h = height;
 }
