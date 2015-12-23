@@ -96,6 +96,7 @@ function update() {
     .attr("type", function(d) { return d.type; })
     .on("click", click)
     .on("mousedown", function() { d3.event.stopPropagation(); })
+    .on("touchstart", function() { d3.event.stopPropagation(); })
     .call(force.drag);
 
   // Create and update book elements
