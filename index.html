@@ -9,14 +9,15 @@ body {
 
 circle {
   stroke: #fff;
-  stroke-width: 1.5px;
+  stroke-width: 2px;
 }
 
 circle[mode="collasped"] {
   stroke: #999;
-  stroke-width: 1.5px;
+  stroke-width: 2px;
 }
- .link {
+
+.link {
   stroke: #999;
   stroke-opacity: .6;
   position: absolute;
@@ -29,7 +30,7 @@ g {
 }
 
 text{
-  font-family: "Helvetica", sans-serif; font-size: 12px;
+  font-family: "Helvetica", sans-serif; font-size: 14px;
 }
 
 text[node_id="0"] {
@@ -37,13 +38,12 @@ text[node_id="0"] {
   fill: white;
   text-anchor: middle;
 }
-
 </style>
 <body>
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script>
 
-var root;
+var root, root_nodes, root_links;
 var color = d3.scale.category10();
 
 var w = window.innerWidth;
@@ -56,6 +56,7 @@ var force = d3.layout.force()
   .size([w,h])
   .on("tick", tick);
 var svg = d3.select("body").append("svg");
+svg.style("cursor", "default")
 var link_container = svg.append("g");
 var node_container = svg.append("g");
 var link = link_container.selectAll(".link");
@@ -65,8 +66,6 @@ d3.json("wenbin.json", function(error, graph) {
   if (error) throw error;
 
   root = graph;
-  root._nodes = [];
-  root._links = [];
   update();
 });
 
@@ -80,7 +79,6 @@ function update() {
 
   // Create and update linkg g containers 
   link = link.data(root.links.filter(function (d) { return d.visible > 0; }));
-    // , function(d) { return d.target.node_id; });
   link.exit().remove();  
   link.enter().append("line")
     .attr("class", "link")
@@ -100,21 +98,6 @@ function update() {
     .on("mousedown", function() { d3.event.stopPropagation(); })
     .call(force.drag);
 
-  // Create and update node and text elements
-  gnode.selectAll(".circle").remove();
-  node_container.selectAll(".gnode[type='node']").append("circle")
-    .attr("class", "circle")
-    .attr("mode", function(d) { return d.mode; })
-    .attr("r", function(d) { return d.r; })
-    .style("fill", function(d) { return color(d.group); });
-  gnode.selectAll(".text").remove();
-  node_container.selectAll(".gnode[type='node']").append("text")
-    .attr("class", "text")
-    .attr("node_id", function(d) { return d.node_id; })
-    .attr("dx", function(d) { return d.node_id != 0 ? d.r + 2 : null; })
-    .attr("dy", ".35em")
-    .text(function(d) {return d.name;});
-
   // Create and update book elements
   gnode.selectAll(".book").remove();
   node_container.selectAll(".gnode[type='book']").append("svg:image")
@@ -125,6 +108,24 @@ function update() {
     .attr("y", "-40px")
     .attr("width", "50")
     .attr("height", "80");
+
+  // Create and update node elements
+  gnode.selectAll(".circle").remove();
+  node_container.selectAll(".gnode[type='node']").append("circle")
+    .attr("class", "circle")
+    .attr("mode", function(d) { return d.mode; })
+    .attr("r", function(d) { return d.r; })
+    .style("fill", function(d) { return color(d.group); });
+
+  // Create and update text elements
+  gnode.selectAll(".text").remove();
+  node_container.selectAll(".gnode[type='node']").append("text")
+    .attr("class", "text")
+    .attr("node_id", function(d) { return d.node_id; })
+    .attr("dx", function(d) { return d.node_id != 0 ? d.r + 2 : null; })
+    .attr("dy", ".35em")
+    .style("text-decoration", function(d) { return d.mode == "link" ? "underline" : "none"; })
+    .text(function(d) {return d.name;});
 
   zoom.on("zoom", function() {
     link_container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
@@ -157,16 +158,27 @@ function resize() {
 }
 
 function click(d,i) {
-  if (d3.event.defaultPrevented) return;
-  toggle_node(d,i);
-  update();
+  if (d3.event.defaultPrevented) {
+    return;
+  }
+  else if (d.mode == "expanded" || d.mode == "collasped") {
+    toggle_node(d,i);
+    update();
+  }
+  else if (d.mode == "link") {
+    toggle_menu();
+  }
+}
+
+function toggle_menu() {
+  console.log("stop");
+  force.stop(); 
 }
 
 function toggle_node(d,i) {
   if (d.mode == "expanded") {
     hide_children(i);
-    d.mode = "collasped";
-  }
+    d.mode = "collasped"; }
   else if (d.mode == "collasped") {
     show_children(i);
     d.mode = "expanded";
