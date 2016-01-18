@@ -133,7 +133,7 @@ function update() {
     node_container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
   });
 
-  svg.call(zoom);
+  svg.call(zoom).on("dblclick.zoom", null);
   resize();
   d3.select(window).on("resize", resize);
 }
