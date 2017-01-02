@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Lim Wen Bin</title>
+    <link>https://limwenbin.github.io/</link>
+    <description>Recent content on Lim Wen Bin</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Mon, 02 Jan 2017 13:31:03 +0800</lastBuildDate>
+    <atom:link href="https://limwenbin.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Hello World!</title>
+      <link>https://limwenbin.github.io/blog/hello-world/</link>
+      <pubDate>Mon, 02 Jan 2017 13:31:03 +0800</pubDate>
+      
+      <guid>https://limwenbin.github.io/blog/hello-world/</guid>
+      <description>&lt;p&gt;This is a blog made from the &lt;a href=&#34;https://gohugo.io/&#34;&gt;hugo&lt;/a&gt; framework with the
+&lt;a href=&#34;http://themes.gohugo.io/cocoa/&#34;&gt;cocoa&lt;/a&gt; theme. More work will be done soon.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
